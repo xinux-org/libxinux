@@ -2,7 +2,13 @@
 name = "libxinux"
 version = "0.1.0"
 edition = "2021"
-
+homepage = "https://github.com/xinux-org/libxinux"
+repository = "https://github.com/xinux-org/libxinux"
+description = "Collection of API & ABI for Xinux"
+authors = ["Sokhibjon Orzikulov <orzklv.uz>"]
+keywords = ["xinux", "libxinux", "linux", "sdk", "api"]
+readme = "readme.md"
+license = "GPL-3.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
