@@ -14,7 +14,7 @@ license = "GPL-3.0"
 
 [features]
 pkgs = []
-sync = []
+async = []
 
 [dependencies]
 serde = { version = "1.0.197", features = ["derive"] }
