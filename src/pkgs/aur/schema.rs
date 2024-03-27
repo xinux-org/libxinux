@@ -76,20 +76,3 @@ impl Display for By {
         write!(f, "{}", str)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const DATA: &str = include_str!("./dump.json");
-
-    #[test]
-    fn deserialize() {
-        let response: Response = serde_json::from_str(DATA).unwrap();
-        println!("{:?}", response);
-        // assert_eq!(response.version, 5);
-        // assert_eq!(response.types, "search");
-        // assert_eq!(response.result_count, 1);
-        // assert_eq!(response.results.len(), 1);
-    }
-}

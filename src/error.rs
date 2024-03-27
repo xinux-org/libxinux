@@ -5,6 +5,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     ParseUrlError(String),
     FetchError(String),
+    NoParams(String),
+    NoResults(String),
 }
 
 impl Debug for Error {
@@ -12,6 +14,8 @@ impl Debug for Error {
         match self {
             Error::ParseUrlError(e) => write!(f, "Couldn't parse the url: {}", e),
             Error::FetchError(e) => write!(f, "Couldn't fetch data from url: {}", e),
+            Error::NoParams(e) => write!(f, "No parameters provided for {} query", e),
+            Error::NoResults(e) => write!(f, "No results found for query {}", e),
         }
     }
 }
