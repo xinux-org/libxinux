@@ -1,0 +1,23 @@
+{
+    "resultcount": 1,
+    "results": [
+        {
+            "Description": "A tool providing access to documentation and support for new Arch Linux users.",
+            "FirstSubmitted": 1667341721,
+            "ID": 1193389,
+            "LastModified": 1673127620,
+            "Maintainer": "Koragg",
+            "Name": "archlinux-hello",
+            "NumVotes": 0,
+            "OutOfDate": null,
+            "PackageBase": "archlinux-hello",
+            "PackageBaseID": 187065,
+            "Popularity": 0,
+            "URL": "https://github.com/KoraggKnightWolf/archlinux-hello",
+            "URLPath": "/cgit/aur.git/snapshot/archlinux-hello.tar.gz",
+            "Version": "0.8.3-1"
+        }
+    ],
+    "type": "search",
+    "version": 5
+}

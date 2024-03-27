@@ -13,7 +13,14 @@ license = "GPL-3.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-xeonix = []
-xeorarch = []
+async = []
 
 [dependencies]
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = { version = "1.0.115", features = ["preserve_order"] }
+url = { version = "2.5.0", features = ["serde"] }
+tokio = { version = "1.16.1", features = ["full"], optional = true }
+reqwest = { version = "0.12.2", features = ["json", "blocking"] }
+
+[dev-dependencies]
+tokio = { version = "1.16.1", features = ["full"] }
