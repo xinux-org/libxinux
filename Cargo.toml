@@ -1,6 +1,6 @@
 [package]
 name = "libxinux"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 homepage = "https://github.com/xinux-org/libxinux"
 repository = "https://github.com/xinux-org/libxinux"
@@ -13,15 +13,21 @@ license = "GPL-3.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-pkgs = []
-async = []
+async = ["pkgs-async"] # All async features
+blocking = ["pkgs"] # All blocking features
+
+# Package features
+pkgs = ["reqwest", "reqwest/blocking", "fuzzy-matcher"]
+pkgs-async = ["tokio", "reqwest", "fuzzy-matcher"]
 
 [dependencies]
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = { version = "1.0.115", features = ["preserve_order"] }
 url = { version = "2.5.0", features = ["serde"] }
+fuzzy-matcher = { version = "0.3.7", optional = true }
+chrono = {version = "0.4.37", features = ["serde"]}
 tokio = { version = "1.16.1", features = ["full"], optional = true }
-reqwest = { version = "0.12.2", features = ["json", "blocking"] }
+reqwest = { version = "0.12.2", features = ["json", "blocking"], optional = true}
 
 [dev-dependencies]
 tokio = { version = "1.16.1", features = ["full"] }

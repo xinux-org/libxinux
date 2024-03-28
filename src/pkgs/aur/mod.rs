@@ -1,24 +1,20 @@
 pub mod schema;
 
-use url::Url;
-
+use serde::{Deserialize, Serialize};
 use crate::error::{Error, Result};
 pub use schema::*;
+use url::Url;
 
 const BASE_URL: &str = "https://aur.archlinux.org/rpc/?v=5";
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Aur {
-    url: Url,
+    pub(crate) url: Url,
 }
 
 impl Aur {
-    pub fn new(base_url: Option<String>) -> Result<Aur> {
-        let url = match base_url {
-            Some(url) => Url::parse(&url),
-            None => Url::parse(BASE_URL),
-        };
-
-        let url = match url {
+    pub fn new() -> Result<Aur> {
+        let url = match Url::parse(BASE_URL) {
             Ok(url) => url,
             Err(e) => return Err(e.into()),
         };
@@ -26,7 +22,20 @@ impl Aur {
         Ok(Aur { url })
     }
 
-    #[cfg(not(feature = "async"))]
+    pub fn set_url(&mut self, base_url: String) -> Result<()> {
+        let url = Url::parse(&base_url);
+
+        let url = match url {
+            Ok(url) => url,
+            Err(e) => return Err(e.into()),
+        };
+
+        self.url = url;
+
+        Ok(())
+    }
+
+    #[cfg(not(feature = "pkgs-async"))]
     pub fn search<T>(&self, query: T, by: Option<By>) -> Result<Response>
     where
         T: AsRef<str>,
@@ -38,20 +47,25 @@ impl Aur {
             None => url,
         };
 
+
         let response = match reqwest::blocking::get(url) {
             Ok(response) => response.json::<Response>(),
             Err(e) => return Err(e.into()),
         };
-
+        
         let response = match response {
             Ok(response) => response,
             Err(e) => return Err(e.into()),
         };
 
+        if response.error.is_some() {
+            return Err(Error::ResponseError(response.error.unwrap()));
+        }
+
         Ok(response)
     }
 
-    #[cfg(feature = "async")]
+    #[cfg(feature = "pkgs-async")]
     pub async fn search<T>(&self, query: T, by: Option<By>) -> Result<Response>
     where
         T: AsRef<str>,
@@ -73,10 +87,14 @@ impl Aur {
             Err(e) => return Err(e.into()),
         };
 
+        if response.error.is_some() {
+            return Err(Error::ResponseError(response.error.unwrap()));
+        }
+
         Ok(response)
     }
 
-    #[cfg(not(feature = "async"))]
+    #[cfg(not(feature = "pkgs-async"))]
     pub fn info(&self, name: &str) -> Result<Data> {
         let url = format!("{}&type=info&arg[]={}", self.url.as_str(), name);
 
@@ -90,6 +108,10 @@ impl Aur {
             Err(e) => return Err(e.into()),
         };
 
+        if response.error.is_some() {
+            return Err(Error::ResponseError(response.error.unwrap()));
+        }
+
         if response.result_count == 0 {
             return Err(Error::NoResults(name.to_string()));
         }
@@ -97,7 +119,7 @@ impl Aur {
         Ok(response.results.first().unwrap().clone())
     }
 
-    #[cfg(feature = "async")]
+    #[cfg(feature = "pkgs-async")]
     pub async fn info(&self, name: &str) -> Result<Data> {
         let url = format!("{}&type=info&arg[]={}", self.url.as_str(), name);
 
@@ -110,6 +132,10 @@ impl Aur {
             Ok(response) => response,
             Err(e) => return Err(e.into()),
         };
+
+        if response.error.is_some() {
+            return Err(Error::ResponseError(response.error.unwrap()));
+        }
 
         if response.result_count == 0 {
             return Err(Error::NoResults(name.to_string()));
@@ -125,46 +151,46 @@ mod tests {
 
     #[test]
     fn test_new() {
-        println!("test_new");
-        let aur = Aur::new(None).unwrap();
+        println!("aur_test_new");
+        let aur = Aur::new().unwrap();
         assert_eq!(aur.url.as_str(), BASE_URL);
     }
 
     #[test]
-    #[cfg(not(feature = "async"))]
+    #[cfg(not(feature = "pkgs-async"))]
     fn test_search() {
-        println!("test_search");
-        let aur = Aur::new(None).unwrap();
+        println!("aur_test_search");
+        let aur = Aur::new().unwrap();
         let response = aur.search("archlinux-hello", None).unwrap();
 
         assert_eq!(response.results.first().unwrap().id, 1193389);
     }
 
     #[tokio::test]
-    #[cfg(feature = "async")]
+    #[cfg(feature = "pkgs-async")]
     async fn test_search_async() {
-        println!("test_search_async");
-        let aur = Aur::new(None).unwrap();
+        println!("aur_test_search_async");
+        let aur = Aur::new().unwrap();
         let response = aur.search("archlinux-hello", None).await.unwrap();
 
         assert_eq!(response.results.first().unwrap().id, 1193389);
     }
 
     #[test]
-    #[cfg(not(feature = "async"))]
+    #[cfg(not(feature = "pkgs-async"))]
     fn test_info() {
-        println!("test_info");
-        let aur = Aur::new(None).unwrap();
+        println!("aur_test_info");
+        let aur = Aur::new().unwrap();
         let response = aur.info("archlinux-hello").unwrap();
 
         assert_eq!(response.id, 1193389);
     }
 
     #[tokio::test]
-    #[cfg(feature = "async")]
+    #[cfg(feature = "pkgs-async")]
     async fn test_info_async() {
-        println!("test_info_async");
-        let aur = Aur::new(None).unwrap();
+        println!("aur_test_info_async");
+        let aur = Aur::new().unwrap();
         let response = aur.info("archlinux-hello").await.unwrap();
 
         assert_eq!(response.id, 1193389);
