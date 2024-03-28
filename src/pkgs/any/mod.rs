@@ -85,51 +85,69 @@ impl Any {
         Ok(results)
     }
 
-    // #[cfg(not(feature = "pkgs-async"))]
-    // pub fn info(&self, name: &str, repo: Repo) -> Result<crate::pkgs::std::Data> {
-    //     let url = format!(
-    //         "{base}/{repo}/{arch}/{name}/json",
-    //         base = self.url.as_str(),
-    //         repo = repo,
-    //         arch = Arch::X86_64,
-    //         name = name
-    //     );
-    //
-    //     let response = match reqwest::blocking::get(url) {
-    //         Ok(response) => response.json::<crate::pkgs::std::Data>(),
-    //         Err(e) => return Err(e.into()),
-    //     };
-    //
-    //     let response = match response {
-    //         Ok(response) => response,
-    //         Err(_) => return Err(Error::NoResults(name.to_string())),
-    //     };
-    //
-    //     Ok(response)
-    // }
+    #[cfg(not(feature = "pkgs-async"))]
+    pub fn info<T>(&self, query: T) -> Result<Data>
+    where
+        T: AsRef<str> + Clone,
+    {
+        let data = match self.search(query.clone()) {
+            Ok(data) => data.first().unwrap().clone(),
+            Err(e) => return Err(e),
+        };
 
-    // #[cfg(feature = "pkgs-async")]
-    // pub async fn info(&self, name: &str, repo: Repo) -> Result<crate::pkgs::std::Data> {
-    //     let url = format!(
-    //         "{base}/{repo}/{arch}/{name}/json",
-    //         base = self.url.as_str(),
-    //         repo = repo,
-    //         arch = Arch::X86_64,
-    //         name = name
-    //     );
-    //
-    //     let response = match reqwest::get(url).await {
-    //         Ok(response) => response.json::<crate::pkgs::std::Data>().await,
-    //         Err(e) => return Err(e.into()),
-    //     };
-    //
-    //     let response = match response {
-    //         Ok(response) => response,
-    //         Err(_) => return Err(Error::NoResults(name.to_string())),
-    //     };
-    //
-    //     Ok(response)
-    // }
+        let result = match data.types {
+            Type::Std => {
+                let action = self.std.info(query.as_ref(), data.repo.unwrap());
+
+                match action {
+                    Ok(action) => action.to_any(),
+                    Err(e) => return Err(e),
+                }
+            }
+            Type::Aur => {
+                let action = self.aur.info(query.as_ref());
+
+                match action {
+                    Ok(action) => action.to_any(),
+                    Err(e) => return Err(e),
+                }
+            }
+        };
+
+        Ok(result)
+    }
+
+    #[cfg(feature = "pkgs-async")]
+    pub async fn info<T>(&self, query: T) -> Result<Data>
+    where
+        T: AsRef<str> + Clone,
+    {
+        let data = match self.search(query.clone()).await {
+            Ok(data) => data.first().unwrap().clone(),
+            Err(e) => return Err(e),
+        };
+
+        let result = match data.types {
+            Type::Std => {
+                let action = self.std.info(query.as_ref(), data.repo.unwrap()).await;
+
+                match action {
+                    Ok(action) => action.to_any(),
+                    Err(e) => return Err(e),
+                }
+            }
+            Type::Aur => {
+                let action = self.aur.info(query.as_ref()).await;
+
+                match action {
+                    Ok(action) => action.to_any(),
+                    Err(e) => return Err(e),
+                }
+            }
+        };
+
+        Ok(result)
+    }
 }
 
 #[cfg(test)]
@@ -165,23 +183,23 @@ mod tests {
         assert_eq!(response.first().unwrap().name, "linux");
     }
 
-    // #[test]
-    // #[cfg(not(feature = "pkgs-async"))]
-    // fn test_info() {
-    //     println!("std_test_info");
-    //     let std = Std::new().unwrap();
-    //     let response = std.info("linux", Repo::Core).unwrap();
-    //
-    //     assert_eq!(response.pkg_name, "linux");
-    // }
+    #[test]
+    #[cfg(not(feature = "pkgs-async"))]
+    fn test_info() {
+        println!("any_test_info");
+        let any = Any::new().unwrap();
+        let response = any.info("linux").unwrap();
 
-    // #[tokio::test]
-    // #[cfg(feature = "pkgs-async")]
-    // async fn test_info_async() {
-    //     println!("std_test_info_async");
-    //     let std = Std::new().unwrap();
-    //     let response = std.info("linux", Repo::Core).await.unwrap();
-    //
-    //     assert_eq!(response.pkg_name, "linux");
-    // }
+        assert_eq!(response.name, "linux");
+    }
+
+    #[tokio::test]
+    #[cfg(feature = "pkgs-async")]
+    async fn test_info_async() {
+        println!("any_test_info_async");
+        let any = Any::new().unwrap();
+        let response = any.info("linux").await.unwrap();
+
+        assert_eq!(response.name, "linux");
+    }
 }

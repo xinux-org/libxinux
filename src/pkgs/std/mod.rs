@@ -76,7 +76,10 @@ impl Std {
     }
 
     #[cfg(not(feature = "pkgs-async"))]
-    pub fn info(&self, name: &str, repo: Repo) -> Result<Data> {
+    pub fn info<T>(&self, name: T, repo: Repo) -> Result<Data>
+    where
+        T: AsRef<str> + std::fmt::Display,
+    {
         let url = format!(
             "{base}/{repo}/{arch}/{name}/json",
             base = self.url.as_str(),
@@ -99,7 +102,10 @@ impl Std {
     }
 
     #[cfg(feature = "pkgs-async")]
-    pub async fn info(&self, name: &str, repo: Repo) -> Result<Data> {
+    pub async fn info<T>(&self, name: T, repo: Repo) -> Result<Data>
+    where
+        T: AsRef<str> + std::fmt::Display,
+    {
         let url = format!(
             "{base}/{repo}/{arch}/{name}/json",
             base = self.url.as_str(),
