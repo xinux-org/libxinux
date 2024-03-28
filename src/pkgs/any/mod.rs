@@ -1,9 +1,8 @@
 pub mod schema;
 
-use crate::error::{Result};
 use super::{aur::Aur, std::Std};
+use crate::error::Result;
 pub use schema::*;
-
 
 pub trait ToAny {
     fn to_any(&self) -> Data;
@@ -36,20 +35,16 @@ impl Any {
         let mut data: Vec<Data> = Vec::new();
 
         match self.std.search(query.clone()) {
-            Ok(std) => {
-                std.results.iter().for_each(|item| {
-                    data.push(item.to_any());
-                })
-            },
+            Ok(std) => std.results.iter().for_each(|item| {
+                data.push(item.to_any());
+            }),
             Err(e) => return Err(e),
         };
 
         match self.aur.search(query.clone(), None) {
-            Ok(aur) => {
-                aur.results.iter().for_each(|item| {
-                    data.push(item.to_any());
-                })
-            },
+            Ok(aur) => aur.results.iter().for_each(|item| {
+                data.push(item.to_any());
+            }),
             Err(e) => return Err(e),
         };
 
@@ -69,20 +64,16 @@ impl Any {
         let mut data: Vec<Data> = Vec::new();
 
         match self.std.search(query.clone()).await {
-            Ok(std) => {
-                std.results.iter().for_each(|item| {
-                    data.push(item.to_any());
-                })
-            },
+            Ok(std) => std.results.iter().for_each(|item| {
+                data.push(item.to_any());
+            }),
             Err(e) => return Err(e),
         };
 
         match self.aur.search(query.clone(), None).await {
-            Ok(aur) => {
-                aur.results.iter().for_each(|item| {
-                    data.push(item.to_any());
-                })
-            },
+            Ok(aur) => aur.results.iter().for_each(|item| {
+                data.push(item.to_any());
+            }),
             Err(e) => return Err(e),
         };
 
@@ -161,10 +152,7 @@ mod tests {
         let any = Any::new().unwrap();
         let response = any.search("linux").unwrap();
 
-        assert_eq!(
-            response.first().unwrap().name,
-            "linux"
-        );
+        assert_eq!(response.first().unwrap().name, "linux");
     }
 
     #[tokio::test]
@@ -174,10 +162,7 @@ mod tests {
         let any = Any::new().unwrap();
         let response = any.search("linux").await.unwrap();
 
-        assert_eq!(
-            response.first().unwrap().name,
-            "linux"
-        );
+        assert_eq!(response.first().unwrap().name, "linux");
     }
 
     // #[test]

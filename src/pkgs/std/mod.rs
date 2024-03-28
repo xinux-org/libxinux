@@ -1,8 +1,8 @@
 pub mod schema;
 
-use serde::{Deserialize, Serialize};
 use crate::error::{Error, Result};
 pub use schema::*;
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 const BASE_URL: &str = "https://archlinux.org/packages/"; // /core/x86_64/linux/json

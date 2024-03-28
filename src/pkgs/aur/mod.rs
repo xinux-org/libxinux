@@ -1,8 +1,8 @@
 pub mod schema;
 
-use serde::{Deserialize, Serialize};
 use crate::error::{Error, Result};
 pub use schema::*;
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 const BASE_URL: &str = "https://aur.archlinux.org/rpc/?v=5";
@@ -47,12 +47,11 @@ impl Aur {
             None => url,
         };
 
-
         let response = match reqwest::blocking::get(url) {
             Ok(response) => response.json::<Response>(),
             Err(e) => return Err(e.into()),
         };
-        
+
         let response = match response {
             Ok(response) => response,
             Err(e) => return Err(e.into()),

@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
-use std::fmt::Display;
+use crate::pkgs::std::Arch;
 use crate::utils::epocher::deserialize_unix_timestamp;
 use chrono::DateTime;
-use crate::pkgs::std::Arch;
+use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Response {
@@ -48,9 +48,15 @@ pub struct Data {
     pub out_of_date: Option<i32>,
     #[serde(rename = "Maintainer")]
     pub maintainer: Option<String>,
-    #[serde(rename = "FirstSubmitted", deserialize_with = "deserialize_unix_timestamp")]
+    #[serde(
+        rename = "FirstSubmitted",
+        deserialize_with = "deserialize_unix_timestamp"
+    )]
     pub first_submitted: DateTime<chrono::Utc>,
-    #[serde(rename = "LastModified", deserialize_with = "deserialize_unix_timestamp")]
+    #[serde(
+        rename = "LastModified",
+        deserialize_with = "deserialize_unix_timestamp"
+    )]
     pub last_modified: DateTime<chrono::Utc>,
     #[serde(rename = "URLPath")]
     pub url_path: String,

@@ -1,8 +1,8 @@
-use chrono::DateTime;
-use fuzzy_matcher::FuzzyMatcher;
-use fuzzy_matcher::skim::SkimMatcherV2;
-use serde::{Deserialize, Serialize};
 use crate::pkgs::std::{Arch, Repo};
+use chrono::DateTime;
+use fuzzy_matcher::skim::SkimMatcherV2;
+use fuzzy_matcher::FuzzyMatcher;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -36,7 +36,8 @@ impl Data {
         let mut scores: Vec<(Self, i64)> = data
             .iter()
             .filter_map(|item| {
-                matcher.fuzzy_match(&item.name, query.as_ref())
+                matcher
+                    .fuzzy_match(&item.name, query.as_ref())
                     .map(|score| (item.clone(), score))
             })
             .collect();
