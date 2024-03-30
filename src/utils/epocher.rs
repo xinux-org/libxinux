@@ -1,7 +1,9 @@
+//! Custom deserialization implementations for Unix timestamps
+
 use chrono::{DateTime, TimeZone, Utc};
 use serde::{Deserialize, Deserializer};
 
-// Custom function to deserialize Unix timestamps
+/// Convert a Unix timestamp to a `DateTime<Utc>`.
 pub fn deserialize_unix_timestamp<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
 where
     D: Deserializer<'de>,

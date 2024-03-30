@@ -1,19 +1,29 @@
+//! # Any Module
+//!
+//! Fetch hybrid data from both standard and AUR repositories.
+
 pub mod schema;
 
 use super::{aur::Aur, std::Std};
 use crate::error::Result;
 pub use schema::*;
 
+/// Convert a struct to Any's `Data` struct.
 pub trait ToAny {
     fn to_any(&self) -> Data;
 }
 
+/// Any struct for fetching hybrid data from both standard and AUR repositories.
 pub struct Any {
+    /// Standard repository client.
     pub std: Std,
+
+    /// AUR repository client.
     pub aur: Aur,
 }
 
 impl Any {
+    /// Create a new instance of `Any`.
     pub fn new() -> Result<Any> {
         Ok(Any {
             std: match Std::new() {
@@ -27,6 +37,19 @@ impl Any {
         })
     }
 
+    /// Returns a vector of `Data` structs that belongs to Any struct.
+    ///
+    /// Search for a package in both standard and AUR repositories with blocking support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::any::Any;
+    /// use libxinux::error::Result;
+    ///
+    /// let any = Any::new().unwrap();
+    /// let response = any.search("linux").unwrap();
+    /// assert_eq!(response.first().unwrap().name, "linux");
+    /// ```
     #[cfg(not(feature = "pkgs-async"))]
     pub fn search<T>(&self, query: T) -> Result<Vec<Data>>
     where
@@ -56,6 +79,22 @@ impl Any {
         Ok(results)
     }
 
+    /// Returns a vector of `Data` structs that belongs to Any struct.
+    ///
+    /// Search for a package in both standard and AUR repositories with async support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::any::Any;
+    /// use libxinux::error::Result;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let any = Any::new().unwrap();
+    ///     let response = any.search("linux").await.unwrap();
+    ///     assert_eq!(response.first().unwrap().name, "linux");
+    /// }
+    /// ```
     #[cfg(feature = "pkgs-async")]
     pub async fn search<T>(&self, query: T) -> Result<Vec<Data>>
     where
@@ -85,6 +124,19 @@ impl Any {
         Ok(results)
     }
 
+    /// Returns a `Data` struct that belongs to Any struct.
+    ///
+    /// Fetch information about a package in both standard and AUR repositories with blocking support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::any::Any;
+    /// use libxinux::error::Result;
+    ///
+    /// let any = Any::new().unwrap();
+    /// let response = any.info("linux").unwrap();
+    /// assert_eq!(response.name, "linux");
+    /// ```
     #[cfg(not(feature = "pkgs-async"))]
     pub fn info<T>(&self, query: T) -> Result<Data>
     where
@@ -117,6 +169,22 @@ impl Any {
         Ok(result)
     }
 
+    /// Returns a `Data` struct that belongs to Any struct.
+    ///
+    /// Fetch information about a package in both standard and AUR repositories with async support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::any::Any;
+    /// use libxinux::error::Result;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let any = Any::new().unwrap();
+    ///     let response = any.info("linux").await.unwrap();
+    ///     assert_eq!(response.name, "linux");
+    /// }
+    /// ```
     #[cfg(feature = "pkgs-async")]
     pub async fn info<T>(&self, query: T) -> Result<Data>
     where

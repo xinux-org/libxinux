@@ -1,3 +1,7 @@
+//! # AUR (Arch User Repository) module
+//!
+//! Fetch information about packages from the AUR (Arch User Repository).
+
 pub mod schema;
 
 use crate::error::{Error, Result};
@@ -5,14 +9,18 @@ pub use schema::*;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
+/// Base RPC URL for the AUR API.
 const BASE_URL: &str = "https://aur.archlinux.org/rpc/?v=5";
 
+/// Aur struct for fetching information about packages from the AUR.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Aur {
+    /// Base URL for the AUR API.
     pub(crate) url: Url,
 }
 
 impl Aur {
+    /// Create a new Aur instance.
     pub fn new() -> Result<Aur> {
         let url = match Url::parse(BASE_URL) {
             Ok(url) => url,
@@ -22,6 +30,18 @@ impl Aur {
         Ok(Aur { url })
     }
 
+    /// Returns nothing.
+    ///
+    /// Set the base URL for the AUR API.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::aur::Aur;
+    /// use libxinux::error::Result;
+    ///
+    /// let mut aur = Aur::new().unwrap();
+    /// aur.set_url("https://aur.archlinux.org/rpc/?v=5".to_string()).unwrap();
+    /// ```
     pub fn set_url(&mut self, base_url: String) -> Result<()> {
         let url = Url::parse(&base_url);
 
@@ -35,6 +55,19 @@ impl Aur {
         Ok(())
     }
 
+    /// Returns a `Response` struct that belongs to Aur struct.
+    ///
+    /// Search for a package in the AUR repository with blocking support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::aur::Aur;
+    /// use libxinux::error::Result;
+    ///
+    /// let aur = Aur::new().unwrap();
+    /// let response = aur.search("archlinux-hello", None).unwrap();
+    /// assert_eq!(response.results.first().unwrap().id, 1193389);
+    /// ```
     #[cfg(not(feature = "pkgs-async"))]
     pub fn search<T>(&self, query: T, by: Option<By>) -> Result<Response>
     where
@@ -64,6 +97,22 @@ impl Aur {
         Ok(response)
     }
 
+    /// Returns a `Response` struct that belongs to Aur struct.
+    ///
+    /// Search for a package in the AUR repository with async support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::aur::Aur;
+    /// use libxinux::error::Result;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let aur = Aur::new().unwrap();
+    ///     let response = aur.search("archlinux-hello", None).await.unwrap();
+    ///     assert_eq!(response.results.first().unwrap().id, 1193389);
+    /// }
+    /// ```
     #[cfg(feature = "pkgs-async")]
     pub async fn search<T>(&self, query: T, by: Option<By>) -> Result<Response>
     where
@@ -93,6 +142,19 @@ impl Aur {
         Ok(response)
     }
 
+    /// Returns a `Data` struct that belongs to Aur struct.
+    ///
+    /// Fetch information about a package in the AUR repository with blocking support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::aur::Aur;
+    /// use libxinux::error::Result;
+    ///
+    /// let aur = Aur::new().unwrap();
+    /// let response = aur.info("archlinux-hello").unwrap();
+    /// assert_eq!(response.id, 1193389);
+    /// ```
     #[cfg(not(feature = "pkgs-async"))]
     pub fn info(&self, name: &str) -> Result<Data> {
         let url = format!("{}&type=info&arg[]={}", self.url.as_str(), name);
@@ -118,6 +180,22 @@ impl Aur {
         Ok(response.results.first().unwrap().clone())
     }
 
+    /// Returns a `Data` struct that belongs to Aur struct.
+    ///
+    /// Fetch information about a package in the AUR repository with async support.
+    ///
+    /// # Example
+    /// ```no_run
+    /// use libxinux::pkgs::aur::Aur;
+    /// use libxinux::error::Result;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let aur = Aur::new().unwrap();
+    ///     let response = aur.info("archlinux-hello").await.unwrap();
+    ///     assert_eq!(response.id, 1193389);
+    /// }
+    /// ```
     #[cfg(feature = "pkgs-async")]
     pub async fn info(&self, name: &str) -> Result<Data> {
         let url = format!("{}&type=info&arg[]={}", self.url.as_str(), name);

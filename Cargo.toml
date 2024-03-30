@@ -10,9 +10,11 @@ keywords = ["xinux", "libxinux", "linux", "sdk", "api"]
 readme = "readme.md"
 license = "GPL-3.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "libxinux"
 
 [features]
+default = ["pkgs"] # All blocking features by default
 async = ["pkgs-async"] # All async features
 blocking = ["pkgs"] # All blocking features
 
