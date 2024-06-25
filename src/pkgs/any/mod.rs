@@ -7,6 +7,7 @@ pub mod schema;
 use super::{aur::Aur, std::Std};
 use crate::error::Result;
 pub use schema::*;
+use serde::{Deserialize, Serialize};
 
 /// Convert a struct to Any's `Data` struct.
 pub trait ToAny {
@@ -14,6 +15,7 @@ pub trait ToAny {
 }
 
 /// Any struct for fetching hybrid data from both standard and AUR repositories.
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Any {
     /// Standard repository client.
     pub std: Std,
