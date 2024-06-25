@@ -1,6 +1,6 @@
 pub mod schema;
 
-pubb struct OldGroups {
+pub struct OldGroups {
     arch: String,
     name: String,
     packs: Vec<Package>
