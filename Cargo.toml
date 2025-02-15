@@ -1,6 +1,6 @@
 [package]
 name = "libxinux"
-version = "0.2.3"
+version = "1.0.0"
 edition = "2021"
 homepage = "https://github.com/xinux-org/libxinux"
 repository = "https://github.com/xinux-org/libxinux"
@@ -13,23 +13,21 @@ license = "GPL-3.0"
 [lib]
 name = "libxinux"
 
-[features]
-default = ["pkgs"] # All blocking features by default
-async = ["pkgs-async"] # All async features
-blocking = ["pkgs"] # All blocking features
-
-# Package features
-pkgs = ["reqwest", "reqwest/blocking", "fuzzy-matcher"]
-pkgs-async = ["tokio", "reqwest", "fuzzy-matcher"]
-
 [dependencies]
-serde = { version = "1.0.197", features = ["derive"] }
-serde_json = { version = "1.0.115", features = ["preserve_order"] }
+fuzzy-matcher = { version = "0.3.7" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
 url = { version = "2.5.0", features = ["serde"] }
-fuzzy-matcher = { version = "0.3.7", optional = true }
-chrono = {version = "0.4.37", features = ["serde"]}
-tokio = { version = "1.16.1", features = ["full"], optional = true }
-reqwest = { version = "0.12.2", features = ["json", "blocking"], optional = true}
-
-[dev-dependencies]
-tokio = { version = "1.16.1", features = ["full"] }
+chrono = { version = "0.4.37", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "blocking", "brotli"] }
+nix-editor = "0.3.0"
+pretty_env_logger = "0.5.0"
+anyhow = "1.0.95"
+csv = "1.3.1"
+log = "0.4.25"
+lazy_static = "1.5.0"
+brotli = "7.0.0"
+rusqlite = "0.33.0"
+rayon = "1.10.0"
+tantivy = { version = "0.22.0", features = ["mmap"] }
