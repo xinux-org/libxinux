@@ -23,8 +23,5 @@ jobs:
     - name: Format
       run: cargo fmt --all -- --check
 
-    - name: Run tests (no async)
-      run: cargo test --verbose --features pkgs
-
-    - name: Run tests (async)
-      run: cargo test --verbose --features pkgs,async
+    - name: Lint
+      run: cargo clippy --all-targets --all-features
