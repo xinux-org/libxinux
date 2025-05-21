@@ -5,10 +5,13 @@ edition = "2021"
 homepage = "https://github.com/xinux-org/libxinux"
 repository = "https://github.com/xinux-org/libxinux"
 description = "Collection of API & ABI for Xinux"
-authors = ["Sokhibjon Orzikulov <orzklv.uz>"]
 keywords = ["xinux", "libxinux", "linux", "sdk", "api"]
 readme = "readme.md"
 license = "GPL-3.0"
+authors = [
+  "Sokhibjon Orzikulov <orzklv.uz>",
+  "Victor Fuentes <vlinkz@snowflakeos.org>",
+]
 
 [lib]
 name = "libxinux"
