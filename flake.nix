@@ -3,7 +3,7 @@
 
   inputs = {
     # Latest nixpkgs from nixos
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:xinux-org/nixpkgs/nixos-unstable";
 
     # Xinux Libs for flake automation
     xinux-lib = {
@@ -16,8 +16,7 @@
     inputs:
     inputs.xinux-lib.mkFlake {
       inherit inputs;
-
-      src = ./.;
       alias.shells.default = "libxinux";
+      src = ./.;
     };
 }
