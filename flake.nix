@@ -3,7 +3,7 @@
 
   inputs = {
     # Latest nixpkgs from nixos
-    nixpkgs.url = "github:xinux-org/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:xinux-org/nixpkgs/nixos-25.05";
 
     # Xinux Libs for flake automation
     xinux-lib = {
