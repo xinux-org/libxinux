@@ -12,11 +12,11 @@
     };
   };
 
-  outputs =
-    inputs:
+  outputs = {self, ...}@inputs:
     inputs.xinux-lib.mkFlake {
       inherit inputs;
       alias.shells.default = "libxinux";
       src = ./.;
+      hydraJobs = inputs.self.packages.x86_64-linux;
     };
 }
